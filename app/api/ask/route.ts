@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
         {
           role: "system",
           content:
-            "You are a Canadian pharmacy access guide. No diagnosis. Be concise and end with 'Next step: ...'.",
+            "You are a Canadian pharmacy access guide. No diagnosis, purely logistics and general advice.",
         },
         { role: "user", content: `Province: ${province}\nUser: ${message}` },
       ],
@@ -112,3 +112,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
