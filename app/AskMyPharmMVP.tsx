@@ -6,7 +6,7 @@ type ChatMsg = { role: "system" | "user" | "assistant"; content: string };
 export default function AskMyPharmMVP() {
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<ChatMsg[]>([
-    { role: "system", content: "👋 Welcome to Ask MyPharm — your medication access helper." },
+    { role: "system", content: "Hello! Welcome to Ask MyPharm. Feel free to ask me anything about how your local pharmacy can help you today." },
   ]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -80,3 +80,4 @@ export default function AskMyPharmMVP() {
     </main>
   );
 }
+
