@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   // fallback to GPT (requires OPENAI_API_KEY in .env.local)
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
   const completion = await client.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-5-nano",
     messages: [
       { role: "system", content: "You are a Canadian pharmacy access guide. No diagnosis. End with 'Next step: …'." },
       { role: "user", content: `Province: ${province}\nUser: ${message}` }
