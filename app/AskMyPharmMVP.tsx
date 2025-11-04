@@ -1,20 +1,22 @@
 "use client";
+import React, { useState } from "react";
 
-import { useState } from "react";
+type ChatMsg = { role: "system" | "user" | "assistant"; content: string };
 
 export default function AskMyPharmMVP() {
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
+  const [input, setInput] = useState<string>("");
+  const [messages, setMessages] = useState<ChatMsg[]>([
     { role: "system", content: "👋 Welcome to Ask MyPharm — your medication access helper." },
   ]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMsg = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMsg]);
+    const userMsg: ChatMsg = { role: "user", content: input };
+    setMessages(prev => [...prev, userMsg]);
+    const payload = input; // keep before clearing
     setInput("");
     setLoading(true);
 
@@ -22,19 +24,21 @@ export default function AskMyPharmMVP() {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input, province: "AB" }),
+        body: JSON.stringify({ message: payload, province: "AB" }),
       });
-      const data = await res.json();
-
-      setMessages((prev) => [...prev, { role: "assistant", content: data.text }]);
-    } catch (err) {
-      setMessages((prev) => [
+      const data: { text?: string } = await res.json();
+      setMessages(prev => [
+        ...prev,
+        { role: "assistant", content: data.text ?? "⚠️ I couldn't generate a reply." },
+      ]);
+    } catch {
+      setMessages(prev => [
         ...prev,
         { role: "assistant", content: "⚠️ There was an error. Try again later." },
       ]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
