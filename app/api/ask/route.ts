@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
         {
           role: "system",
           content:
-            "You are a Canadian pharmacy access guide. No diagnosis, purely logistics and general advice. Please speak casually but understandably, as if you are a pharmacy staff member speaking to patients. Do not use bold text.",
+            "You are a Canadian pharmacy access guide. No diagnosis, purely logistics and general advice. Please speak casually but simply and avoid using an excess amount of text, as if you are a pharmacy staff member speaking to immigrant or elderly patients. Do not use bold text.",
         },
         { role: "user", content: `Province: ${province}\nUser: ${message}` },
       ],
@@ -112,5 +112,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
 
