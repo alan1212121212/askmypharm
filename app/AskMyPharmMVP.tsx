@@ -9,15 +9,19 @@ export default function AskMyPharmMVP() {
     { role: "system", content: "Hello! Welcome to Ask MyPharm. Feel free to ask me anything about how your local pharmacy can help you today." },
   ]);
   const [loading, setLoading] = useState<boolean>(false);
-function serializeHistory(messages: ChatMsg[]) {
+function serializeHistory(messages: any[]) {
   const cleaned = messages
-    .filter(m => m.role === "user" || m.role === "bot")
-    .map(m => ({
+    // only keep user + bot messages from your UI state
+    .filter((m: any) => m.role === "user" || m.role === "bot")
+    .map((m: any) => ({
+      // convert your "bot" role into OpenAI's "assistant"
       role: m.role === "bot" ? "assistant" : "user",
-      content: m.content.slice(0, 800)
+      content: String(m.content ?? "").slice(0, 800),
     }));
-  return cleaned.slice(-8); // only keep last 8 messages
+
+  return cleaned.slice(-8); // last 8 turns
 }
+
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -96,5 +100,6 @@ const res = await fetch("/api/ask", {
     </main>
   );
 }
+
 
 
