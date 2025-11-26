@@ -9,6 +9,15 @@ export default function AskMyPharmMVP() {
     { role: "system", content: "Hello! Welcome to Ask MyPharm. Feel free to ask me anything about how your local pharmacy can help you today." },
   ]);
   const [loading, setLoading] = useState<boolean>(false);
+function serializeHistory(messages: ChatMsg[]) {
+  const cleaned = messages
+    .filter(m => m.role === "user" || m.role === "bot")
+    .map(m => ({
+      role: m.role === "bot" ? "assistant" : "user",
+      content: m.content.slice(0, 800)
+    }));
+  return cleaned.slice(-8); // only keep last 8 messages
+}
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -21,11 +30,18 @@ export default function AskMyPharmMVP() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: payload, province: "AB" }),
-      });
+      const history = serializeHistory(messages);
+
+const res = await fetch("/api/ask", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    message: payload,
+    province,
+    history
+  }),
+});
+
       const data: { text?: string } = await res.json();
       setMessages(prev => [
         ...prev,
@@ -80,4 +96,5 @@ export default function AskMyPharmMVP() {
     </main>
   );
 }
+
 
