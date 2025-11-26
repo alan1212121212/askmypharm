@@ -40,10 +40,9 @@ const res = await fetch("/api/ask", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    message: payload,
-    province,
-    history
-  }),
+  message: payload,
+  history
+}),
 });
 
       const data: { text?: string } = await res.json();
@@ -63,7 +62,7 @@ const res = await fetch("/api/ask", {
 
   return (
     <main className="min-h-screen bg-black text-gray-100 flex flex-col items-center p-6">
-      <h1 className="text-3xl font-semibold mb-4">💊 Ask MyPharm</h1>
+      <h1 className="text-3xl font-semibold mb-4">Ask MyPharm</h1>
       <div className="w-full max-w-2xl border border-gray-700 rounded-2xl p-4 bg-[#111]">
         <div className="h-[60vh] overflow-y-auto space-y-3 mb-3 p-2">
           {messages.map((msg, i) => (
@@ -100,6 +99,7 @@ const res = await fetch("/api/ask", {
     </main>
   );
 }
+
 
 
 
