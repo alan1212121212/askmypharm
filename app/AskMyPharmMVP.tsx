@@ -17,7 +17,8 @@ const LANGS: LangDef[] = [
     flag: "🇨🇦",
     greeting: "Welcome to Ask MyPharm — your medication access helper.",
     placeholder: "Type your question…",
-    scriptHint: "I can help explain how pharmacy services and coverage work in Alberta."
+    scriptHint:
+      "I can help explain how pharmacy services and coverage work in Alberta.",
   },
   {
     code: "zh",
@@ -25,34 +26,38 @@ const LANGS: LangDef[] = [
     flag: "🇨🇳",
     greeting: "欢迎使用 Ask MyPharm，这里帮助你了解如何取药和报销。",
     placeholder: "在这里输入你的问题…",
-    scriptHint: "我可以帮你说明阿尔伯塔省的药房服务和报销方式。"
+    scriptHint: "我可以帮你说明阿尔伯塔省的药房服务和报销方式。",
   },
   {
     code: "pa",
     label: "ਪੰਜਾਬੀ",
-    flag: "🇮🇳", // Punjabi is spoken in India & Pakistan; India flag is fine for MVP
+    flag: "🇮🇳", // MVP: India flag is fine for Punjabi
     greeting: "Ask MyPharm ਤੁਹਾਡੀ ਦਵਾਈਆਂ ਅਤੇ ਕਵਰੇਜ ਬਾਰੇ ਮਦਦ ਲਈ ਹੈ।",
     placeholder: "ਇੱਥੇ ਆਪਣਾ ਸਵਾਲ ਲਿਖੋ…",
-    scriptHint: "ਮੈਂ ਤੁਹਾਨੂੰ ਅਲਬਰਟਾ ਵਿੱਚ ਫਾਰਮੇਸੀ ਸੇਵਾਵਾਂ ਅਤੇ ਕਵਰੇਜ ਬਾਰੇ ਸਮਝਾ ਸਕਦਾ/ਸਕਦੀ ਹਾਂ।"
+    scriptHint:
+      "ਮੈਂ ਤੁਹਾਨੂੰ ਅਲਬਰਟਾ ਵਿੱਚ ਫਾਰਮੇਸੀ ਸੇਵਾਵਾਂ ਅਤੇ ਕਵਰੇਜ ਬਾਰੇ ਸਮਝਾ ਸਕਦਾ/ਸਕਦੀ ਹਾਂ।",
   },
   {
     code: "tl",
     label: "Tagalog",
     flag: "🇵🇭",
-    greeting: "Maligayang pagdating sa Ask MyPharm — tutulungan kitang maintindihan ang pagkuha ng gamot at coverage.",
+    greeting:
+      "Maligayang pagdating sa Ask MyPharm — tutulungan kitang maintindihan ang pagkuha ng gamot at coverage.",
     placeholder: "I-type ang tanong mo…",
-    scriptHint: "Maaari kitang tulungan na maintindihan ang mga pharmacy services at coverage sa Alberta."
+    scriptHint:
+      "Maaari kitang tulungan na maintindihan ang mga pharmacy services at coverage sa Alberta.",
   },
   {
     code: "ar",
     label: "العربية",
     flag: "🇸🇦",
-    greeting: "مرحبًا بك في Ask MyPharm — سأساعدك على فهم كيفية الحصول على أدويتك والتغطية الصحية في ألبرتا.",
+    greeting:
+      "مرحبًا بك في Ask MyPharm — سأساعدك على فهم كيفية الحصول على أدويتك والتغطية الصحية في ألبرتا.",
     placeholder: "اكتب سؤالك هنا…",
-    scriptHint: "يمكنني مساعدتك في شرح خدمات الصيدلية والتغطية الصحية في ألبرتا.ا."
-  }
+    scriptHint:
+      "يمكنني مساعدتك في شرح خدمات الصيدلية والتغطية الصحية في ألبرتا.",
+  },
 ];
-
 
 type ChatMsg = { role: "system" | "user" | "assistant"; content: string };
 
@@ -65,8 +70,7 @@ function serializeHistory(messages: ChatMsg[]) {
       content: String(m.content ?? "").slice(0, 800),
     }));
 
-  // last 8 turns max
-  return cleaned.slice(-8);
+  return cleaned.slice(-8); // last 8 turns
 }
 
 export default function AskMyPharmMVP() {
@@ -75,9 +79,7 @@ export default function AskMyPharmMVP() {
   const currentLang = LANGS[langIndex];
 
   const [input, setInput] = useState<string>("");
-  const [messages, setMessages] = useState<ChatMsg[]>([
-    { role: "assistant", content: LANGS[0].greeting },
-  ]);
+  const [messages, setMessages] = useState<ChatMsg[]>([]); // no greeting here
   const [loading, setLoading] = useState<boolean>(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -98,7 +100,6 @@ export default function AskMyPharmMVP() {
     setLoading(true);
 
     try {
-      // include the new user message in history
       const history = serializeHistory([...messages, userMsg]);
 
       const res = await fetch("/api/ask", {
@@ -165,6 +166,11 @@ export default function AskMyPharmMVP() {
 
         <div className="border border-gray-700 rounded-2xl p-4 bg-[#111]">
           <div className="h-[60vh] overflow-y-auto space-y-3 mb-3 p-2">
+            {/* language-dependent greeting bubble */}
+            <div className="p-3 rounded-xl bg-slate-900 text-gray-100 max-w-[90%]">
+              {currentLang.greeting}
+            </div>
+
             {messages.map((msg, i) => (
               <div
                 key={i}
@@ -177,6 +183,7 @@ export default function AskMyPharmMVP() {
                 {msg.content}
               </div>
             ))}
+
             {loading && <p className="text-sm text-gray-500">Thinking...</p>}
           </div>
 
@@ -204,5 +211,3 @@ export default function AskMyPharmMVP() {
     </main>
   );
 }
-
-
