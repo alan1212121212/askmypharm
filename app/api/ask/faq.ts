@@ -13,7 +13,9 @@ Alberta Blue Cross has a Seniors program that helps with prescription costs for 
 
 The copay is 30% of the prescription cost, but if 30% of the prescription cost is more than $30 (November 2025), the maximum you pay will be $30.
 `.trim(),
-
+emergency: `
+If this may be an emergency, please dial 911 or go to the nearest emergency department immediately. 
+`.trim(),
   compression_stockings: `
 For stronger compression stockings in Alberta (for example 20–30 mmHg or higher), you usually need a prescription and proper measurement by trained staff. Lighter support stockings can be sold over the counter.
 
