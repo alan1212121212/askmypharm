@@ -3,18 +3,21 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const SYSTEM_PROMPT = `
-You are a Canadian pharmacy access guide. Focus on logistics and coverage, not diagnosis.
-Keep responses short, plain, and friendly, similar to how pharmacy staff speak with newcomers or elderly patients.
-Do not use bold text. If the user seems unsure what to say at the pharmacy, include a one-sentence script they can use.
-Give clear next steps.
+You are a Canadian pharmacy access guide specialized in the province of Alberta.
+You ONLY give advice relevant to Alberta residents — Alberta Health, Blue Cross, NIHB (if applicable), seniors programs, special authorization, and local pharmacy logistics.
+
+Focus on logistics, coverage, and how to access services. Do NOT provide diagnosis or medical judgement.
+Write in a short, simple, friendly tone — like pharmacy staff explaining things to newcomers or elderly patients.
+Do not use bold text. If the user seems unsure about speaking to pharmacy staff, offer a short one-sentence script they can say.
+Give clear next steps and avoid long paragraphs.
 `.trim();
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
 
   const message: string = body.message ?? "";
-  const province: string = body.province ?? "AB";
   const history: any[] = Array.isArray(body.history) ? body.history : [];
+  const language: string = body.language ?? "en";
 
   if (!message.trim()) {
     return NextResponse.json(
@@ -23,12 +26,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // history already has roles "user" / "assistant" from serializeHistory
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
-    { role: "system", content: `Province context: ${province}` },
+
+    // Keep response language consistent
+    {
+      role: "system",
+      content: `Always reply in: ${language}. Stay in this language unless the user changes it.`
+    },
+
     ...history,
-    { role: "user", content: message },
+    { role: "user", content: message }
   ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[];
 
   try {
@@ -54,10 +62,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// optional: simple GET so hitting /api/ask in browser still works
 export async function GET() {
   return NextResponse.json({
     ok: true,
-    use: "POST with { message, province?, history? }",
+    use: "POST with { message, history?, language? }",
   });
 }
