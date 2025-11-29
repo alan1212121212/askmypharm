@@ -26,9 +26,33 @@ const LANGS: LangDef[] = [
     greeting: "欢迎使用 Ask MyPharm，这里帮助你了解如何取药和报销。",
     placeholder: "在这里输入你的问题…",
     scriptHint: "如果你在药房不好意思开口，我可以给你一句简单的话直接照着说。"
+  },
+  {
+    code: "pa",
+    label: "ਪੰਜਾਬੀ",
+    flag: "🇮🇳", // Punjabi is spoken in India & Pakistan; India flag is fine for MVP
+    greeting: "Ask MyPharm ਤੁਹਾਡੀ ਦਵਾਈਆਂ ਅਤੇ ਕਵਰੇਜ ਬਾਰੇ ਮਦਦ ਲਈ ਹੈ।",
+    placeholder: "ਇੱਥੇ ਆਪਣਾ ਸਵਾਲ ਲਿਖੋ…",
+    scriptHint: "ਜੇ ਤੁਹਾਨੂੰ ਫਾਰਮੇਸੀ ਵਿਚ ਗੱਲ ਕਰਨੀ ਔਖੀ ਲੱਗੇ, ਮੈਂ ਇਕ ਸਧਾਰਨ ਵਾਕ ਵੀ ਦੇ ਸਕਦਾ ਹਾਂ।"
+  },
+  {
+    code: "tl",
+    label: "Tagalog",
+    flag: "🇵🇭",
+    greeting: "Maligayang pagdating sa Ask MyPharm — tutulungan kitang maintindihan ang pagkuha ng gamot at coverage.",
+    placeholder: "I-type ang tanong mo…",
+    scriptHint: "Kung nahihiya kang magsalita sa parmasya, maaari kitang bigyan ng simpleng linyang sasabihin."
+  },
+  {
+    code: "ar",
+    label: "العربية",
+    flag: "🇸🇦",
+    greeting: "مرحبًا بك في Ask MyPharm — سأساعدك على فهم كيفية الحصول على أدويتك والتغطية الصحية في ألبرتا.",
+    placeholder: "اكتب سؤالك هنا…",
+    scriptHint: "إذا كنت مترددًا في الحديث في الصيدلية، أستطيع أن أعطيك جملة قصيرة جاهزة لتقولها."
   }
-  // add more languages here later
 ];
+
 
 type ChatMsg = { role: "system" | "user" | "assistant"; content: string };
 
@@ -180,3 +204,4 @@ export default function AskMyPharmMVP() {
     </main>
   );
 }
+
