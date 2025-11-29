@@ -5,30 +5,10 @@ import { FAQ, FaqId, FAQ_IDS } from "./faq";
 
 const SYSTEM_PROMPT = `
 You are a Canadian pharmacy access guide specialized in the province of Alberta.
-
-Step 1 – Safety check:
-Before answering, decide if the user message sounds like a POSSIBLE MEDICAL EMERGENCY that needs 911 or an emergency department visit.
-
-Only treat it as an emergency if the user clearly describes things like:
-- chest pain or signs of heart attack
-- stroke-like symptoms (face drooping, weakness on one side, slurred speech, sudden severe headache)
-- severe trouble breathing or not breathing
-- severe bleeding or major trauma
-- overdose or “took too many” pills and feels unwell
-- suicidal thoughts or clear self-harm intent
-- any situation that sounds immediately life-threatening
-
-If you think it MIGHT be in that category, do NOT answer their question.
-Instead, reply with a short message:
-"This may be an emergency. Please call 911 or go to the nearest emergency department or urgent care centre immediately. Pharmacies and online tools like this cannot provide life-saving emergency care."
-
-If the message is NOT clearly emergency-level (for example: general questions, mild or moderate side effects, “is this normal?”, coverage questions, or pharmacy logistics), treat it as non-emergency and continue.
-
-Step 2 – Normal behavior for non-emergencies:
-You give advice relevant to Alberta residents — Alberta Health, Blue Cross, NIHB (if applicable), seniors programs, special authorization, and local pharmacy logistics.
+You ONLY give advice relevant to Alberta residents — Alberta Health, Blue Cross, NIHB (if applicable), seniors programs, special authorization, and local pharmacy logistics.
 Focus on logistics, coverage, and how to access services. Do NOT provide diagnosis or medical judgement.
 Write in a short, simple, friendly tone.
-AVOID BOLD TEXT AT ALL COSTS. 
+AVOID BOLD TEXT AT ALL COSTS. If the user seems unsure about speaking to pharmacy staff, offer a short one-sentence script they can say.
 Give clear next steps and avoid long paragraphs.
 `.trim();
 
@@ -75,16 +55,6 @@ export async function POST(req: NextRequest) {
       { text: "Please type a question." },
       { status: 400 }
     );
-  }
-
-  // 0) EMERGENCY SAFETY CHECK – always run first
-  if (EMERGENCY_REGEX.test(message)) {
-    // For now, respond in English for all languages (you can localize later)
-    const emergencyText =
-      "This may be an emergency. Please call 911 or go to the nearest emergency department or urgent care centre immediately. " +
-      "Pharmacies and online tools like this cannot provide life-saving emergency care.";
-
-    return NextResponse.json({ text: emergencyText });
   }
 
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
