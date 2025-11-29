@@ -17,7 +17,7 @@ const LANGS: LangDef[] = [
     flag: "🇨🇦",
     greeting: "Welcome to Ask MyPharm — your medication access helper.",
     placeholder: "Type your question…",
-    scriptHint: "If you're nervous, I can give you a simple sentence to say at the pharmacy."
+    scriptHint: "I can help explain how pharmacy services and coverage work in Alberta."
   },
   {
     code: "zh",
@@ -25,7 +25,7 @@ const LANGS: LangDef[] = [
     flag: "🇨🇳",
     greeting: "欢迎使用 Ask MyPharm，这里帮助你了解如何取药和报销。",
     placeholder: "在这里输入你的问题…",
-    scriptHint: "如果你在药房不好意思开口，我可以给你一句简单的话直接照着说。"
+    scriptHint: "我可以帮你说明阿尔伯塔省的药房服务和报销方式。"
   },
   {
     code: "pa",
@@ -33,7 +33,7 @@ const LANGS: LangDef[] = [
     flag: "🇮🇳", // Punjabi is spoken in India & Pakistan; India flag is fine for MVP
     greeting: "Ask MyPharm ਤੁਹਾਡੀ ਦਵਾਈਆਂ ਅਤੇ ਕਵਰੇਜ ਬਾਰੇ ਮਦਦ ਲਈ ਹੈ।",
     placeholder: "ਇੱਥੇ ਆਪਣਾ ਸਵਾਲ ਲਿਖੋ…",
-    scriptHint: "ਜੇ ਤੁਹਾਨੂੰ ਫਾਰਮੇਸੀ ਵਿਚ ਗੱਲ ਕਰਨੀ ਔਖੀ ਲੱਗੇ, ਮੈਂ ਇਕ ਸਧਾਰਨ ਵਾਕ ਵੀ ਦੇ ਸਕਦਾ ਹਾਂ।"
+    scriptHint: "ਮੈਂ ਤੁਹਾਨੂੰ ਅਲਬਰਟਾ ਵਿੱਚ ਫਾਰਮੇਸੀ ਸੇਵਾਵਾਂ ਅਤੇ ਕਵਰੇਜ ਬਾਰੇ ਸਮਝਾ ਸਕਦਾ/ਸਕਦੀ ਹਾਂ।"
   },
   {
     code: "tl",
@@ -41,7 +41,7 @@ const LANGS: LangDef[] = [
     flag: "🇵🇭",
     greeting: "Maligayang pagdating sa Ask MyPharm — tutulungan kitang maintindihan ang pagkuha ng gamot at coverage.",
     placeholder: "I-type ang tanong mo…",
-    scriptHint: "Kung nahihiya kang magsalita sa parmasya, maaari kitang bigyan ng simpleng linyang sasabihin."
+    scriptHint: "Maaari kitang tulungan na maintindihan ang mga pharmacy services at coverage sa Alberta."
   },
   {
     code: "ar",
@@ -49,7 +49,7 @@ const LANGS: LangDef[] = [
     flag: "🇸🇦",
     greeting: "مرحبًا بك في Ask MyPharm — سأساعدك على فهم كيفية الحصول على أدويتك والتغطية الصحية في ألبرتا.",
     placeholder: "اكتب سؤالك هنا…",
-    scriptHint: "إذا كنت مترددًا في الحديث في الصيدلية، أستطيع أن أعطيك جملة قصيرة جاهزة لتقولها."
+    scriptHint: "يمكنني مساعدتك في شرح خدمات الصيدلية والتغطية الصحية في ألبرتا.ا."
   }
 ];
 
@@ -204,4 +204,5 @@ export default function AskMyPharmMVP() {
     </main>
   );
 }
+
 
