@@ -5,59 +5,34 @@ import { FAQ, FaqId, FAQ_IDS } from "./faq";
 
 const SYSTEM_PROMPT = `
 You are a Canadian pharmacy access guide specialized in the province of Alberta.
-You ONLY give advice relevant to Alberta residents — Alberta Health, Blue Cross, NIHB (if applicable), seniors programs, special authorization, and local pharmacy logistics.
+
+Step 1 – Safety check:
+Before answering, decide if the user message sounds like a POSSIBLE MEDICAL EMERGENCY that needs 911 or an emergency department visit.
+
+Only treat it as an emergency if the user clearly describes things like:
+- chest pain or signs of heart attack
+- stroke-like symptoms (face drooping, weakness on one side, slurred speech, sudden severe headache)
+- severe trouble breathing or not breathing
+- severe bleeding or major trauma
+- overdose or “took too many” pills and feels unwell
+- suicidal thoughts or clear self-harm intent
+- any situation that sounds immediately life-threatening
+
+If you think it MIGHT be in that category, do NOT answer their question.
+Instead, reply with a short message:
+"This may be an emergency. Please call 911 or go to the nearest emergency department or urgent care centre immediately. Pharmacies and online tools like this cannot provide life-saving emergency care."
+
+If the message is NOT clearly emergency-level (for example: general questions, mild or moderate side effects, “is this normal?”, coverage questions, or pharmacy logistics), treat it as non-emergency and continue.
+
+Step 2 – Normal behavior for non-emergencies:
+You give advice relevant to Alberta residents — Alberta Health, Blue Cross, NIHB (if applicable), seniors programs, special authorization, and local pharmacy logistics.
 Focus on logistics, coverage, and how to access services. Do NOT provide diagnosis or medical judgement.
 Write in a short, simple, friendly tone.
-AVOID BOLD TEXT AT ALL COSTS. If the user seems unsure about speaking to pharmacy staff, offer a short one-sentence script they can say.
+AVOID BOLD TEXT AT ALL COSTS. 
 Give clear next steps and avoid long paragraphs.
 `.trim();
 
-// --- Emergency classifier: "emergency" | "non_emergency" ---
-async function classifyEmergency(
-  client: OpenAI,
-  question: string
-): Promise<"emergency" | "non_emergency"> {
-  const system = `
-You are a safety router for a Canadian pharmacy access chatbot.
-Your job is ONLY to decide if the user message sounds like a POSSIBLE MEDICAL EMERGENCY that needs 911 / emergency department, versus something that can be handled by pharmacists, nurses, 811 or routine care.
-
-Return EXACTLY one of:
-- emergency
-- non_emergency
-
-Label as "emergency" ONLY if the user clearly describes:
-- chest pain, signs of heart attack
-- stroke-like symptoms (face drooping, weakness on one side, slurred speech, sudden severe headache)
-- severe trouble breathing or not breathing
-- severe bleeding, major trauma
-- overdose or took too many pills and feels unwell
-- suicidal thoughts or clear self-harm intent
-- an acute reaction that sounds life-threatening
-
-Questions asking in general about:
-- whether a side effect is normal
-- mild or moderate symptoms
-- whether they should talk to a pharmacist or doctor
-SHOULD BE "non_emergency" even if the symptom could sometimes be serious.
-
-If you are not clearly sure it is emergency-level and immediately life-threatening, answer with: non_emergency.
-`.trim();
-
-  const completion = await client.chat.completions.create({
-    model: "gpt-4o-mini",
-    temperature: 0,
-    messages: [
-      { role: "system", content: system },
-      { role: "user", content: question },
-    ],
-  });
-
-  const raw = (completion.choices[0]?.message?.content ?? "").trim().toLowerCase();
-  if (raw === "emergency") return "emergency";
-  return "non_emergency";
-}
-
-// --- FAQ router: map to FaqId or "none" ---
+// Small helper: classify a question into a FAQ id, or "none"
 async function classifyToFaqId(
   client: OpenAI,
   question: string
@@ -102,23 +77,19 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  // 0) EMERGENCY SAFETY CHECK – always run first
+  if (EMERGENCY_REGEX.test(message)) {
+    // For now, respond in English for all languages (you can localize later)
+    const emergencyText =
+      "This may be an emergency. Please call 911 or go to the nearest emergency department or urgent care centre immediately. " +
+      "Pharmacies and online tools like this cannot provide life-saving emergency care.";
 
-  // 0) AI EMERGENCY CHECK – top priority
-  try {
-    const emergencyFlag = await classifyEmergency(client, message);
-    if (emergencyFlag === "emergency") {
-      const emergencyText =
-        "This may be an emergency. Please call 911 or go to the nearest emergency department or urgent care centre immediately. " +
-        "Pharmacies and online tools like this cannot provide life-saving emergency care.";
-      return NextResponse.json({ text: emergencyText });
-    }
-  } catch (err) {
-    console.error("Emergency classifier error:", err);
-    // if it fails, just continue; better to still answer than crash
+    return NextResponse.json({ text: emergencyText });
   }
 
-  // 1) FAQ ROUTER STEP: if language is English, see if this maps to a known FAQ
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+
+  // 1) ROUTER STEP: if language is English, see if this maps to a known FAQ
   if (language === "en") {
     try {
       const faqId = await classifyToFaqId(client, message);
@@ -128,17 +99,20 @@ export async function POST(req: NextRequest) {
       }
     } catch (e) {
       console.error("FAQ router error:", e);
-      // If router fails, fall through to normal chat
+      // If router fails, just fall through to normal chat
     }
   }
 
   // 2) FALLBACK: normal chat completion with your existing system prompt
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
+
+    // Keep response language consistent
     {
       role: "system",
       content: `Always reply in: ${language}. Stay in this language unless the user changes it.`,
     },
+
     ...history,
     { role: "user", content: message },
   ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[];
